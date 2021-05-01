@@ -114,7 +114,7 @@ MarkupSafe
 matplotlib 
 mccabe==0.6.1
 mistune 
-mkl-fft==1.3.0
+mkl-fft
 mkl-random 
 mkl-service==2.3.0
 mpl-scatter-density 
