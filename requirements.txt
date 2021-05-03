@@ -9,6 +9,5 @@ numpy==1.18.5
 matplotlib==3.3.4
 bokeh==2.3.1
 opencv-python
-opencv-contrib-python
 opencv
 libgl1-mesa-glx
