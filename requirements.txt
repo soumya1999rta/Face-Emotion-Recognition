@@ -8,5 +8,5 @@ pandas==1.2.4
 numpy==1.18.5
 matplotlib==3.3.4
 bokeh==2.3.1
-opencv
-libgl1-mesa-glx
+opencv-contrib-python==4.5.1.48
+opencv-python==4.5.1.48
