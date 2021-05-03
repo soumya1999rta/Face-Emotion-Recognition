@@ -180,7 +180,6 @@ python-dateutil
 python-louvain 
 pytz 
 PyWavelets 
-pywin32==227
 pywin32-ctypes 
 pywinpty==0.5.7
 PyYAML==5.4.1
