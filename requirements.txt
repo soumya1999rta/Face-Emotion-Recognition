@@ -1,0 +1,10 @@
+tqdm==4.60.0
+streamlit==0.81.0
+scikit-learn==0.24.1
+pyforest==1.0.3
+Pillow==8.2.0
+numpy==1.18.5
+bokeh==2.3.1
+keras
+opencv-python
+opencv-contrib-python
