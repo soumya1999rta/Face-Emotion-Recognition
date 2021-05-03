@@ -217,7 +217,6 @@ streamlit==0.81.0
 streamlit-webrtc==0.11.0
 tblib 
 tensorboard 
-tensorboard-plugin-wit==1.6.0
 tensorflow==2.3.0
 tensorflow-estimator 
 termcolor==1.1.0
