@@ -241,10 +241,12 @@ def main():
                   1. Click on  Start  to open webcam.
                  
                   2. If you have more than one camera , then select by using select device.
+		  
+		  3. Have some fun with your camera by choosing the options below.
                   
-                  3. Click on  Stop  to end.
+                  4. Click on  Stop  to end.
                   
-                  4. Still webcam window didnot open,  Contact Us.''')
+                  5. Still webcam window didnot open,  Contact Us.''')
         app_video_filters()
         
         
