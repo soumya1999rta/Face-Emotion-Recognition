@@ -217,7 +217,7 @@ def main():
                  
                   2. WebCam window will open with a name of Emotion Detector automatically.If not found then, Have a look at the Taskbar.
                   
-                  3. Make sure that camera shouldn't be used by any other app.
+                     3. Make sure that camera shouldn't be used by any other app.
                   
                   4. Press "q" key to end the webcam window.
                   
