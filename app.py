@@ -213,7 +213,7 @@ def main():
         st.write("Go to the About section from the sidebar to learn more about it.")
         st.write("**Instructions while using the APP**")
         st.write('''
-                 1. Click on the Proceed button to start.
+                  1. Click on the Proceed button to start.
                  
                   2. WebCam window will open with a name of Emotion Detector automatically.If not found then, Have a look at the Taskbar.
                   
