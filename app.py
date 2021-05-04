@@ -1,4 +1,11 @@
 # Importing required libraries, obviously
+import logging
+import logging.handlers
+import queue
+import threading
+import urllib.request
+from pathlib import Path
+from typing import List, NamedTuple
 import streamlit as st
 import cv2
 from PIL import Image
@@ -8,6 +15,40 @@ from keras.models import load_model
 from time import sleep
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing import image
+
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal  # type: ignore
+    
+import av
+import cv2
+import numpy as np
+import streamlit as st
+
+
+from streamlit_webrtc import (
+    ClientSettings,
+    VideoTransformerBase,
+    WebRtcMode,
+    webrtc_streamer,
+)
+
+HERE = Path(__file__).parent
+
+logger = logging.getLogger(__name__)
+
+
+
+
+
+WEBRTC_CLIENT_SETTINGS = ClientSettings(
+    rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
+    media_stream_constraints={"video": True, "audio": True},
+)
+
+
+
 
 
 # Loading pre-trained parameters for the cascade classifier
@@ -86,6 +127,70 @@ Read more :
         https://docs.opencv.org/2.4/modules/objdetect/doc/cascade_classification.html
 https://sites.google.com/site/5kk73gpu2012/assignment/viola-jones-face-detection#TOC-Image-Pyramid
 		''')
+def app_video_filters():
+    """ Video transforms with OpenCV """
+
+    class OpenCVVideoTransformer(VideoTransformerBase):
+        type: Literal["noop", "cartoon", "edges", "rotate"]
+
+        def __init__(self) -> None:
+            self.type = "noop"
+
+        def transform(self, frame: av.VideoFrame) -> av.VideoFrame:
+            img = frame.to_ndarray(format="bgr24")
+
+            if self.type == "noop":
+                pass
+            elif self.type == "cartoon":
+                # prepare color
+                img_color = cv2.pyrDown(cv2.pyrDown(img))
+                for _ in range(6):
+                    img_color = cv2.bilateralFilter(img_color, 9, 9, 7)
+                img_color = cv2.pyrUp(cv2.pyrUp(img_color))
+
+                # prepare edges
+                img_edges = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+                img_edges = cv2.adaptiveThreshold(
+                    cv2.medianBlur(img_edges, 7),
+                    255,
+                    cv2.ADAPTIVE_THRESH_MEAN_C,
+                    cv2.THRESH_BINARY,
+                    9,
+                    2,
+                )
+                img_edges = cv2.cvtColor(img_edges, cv2.COLOR_GRAY2RGB)
+
+                # combine color and edges
+                img = cv2.bitwise_and(img_color, img_edges)
+            elif self.type == "edges":
+                # perform edge detection
+                img = cv2.cvtColor(cv2.Canny(img, 100, 200), cv2.COLOR_GRAY2BGR)
+            elif self.type == "rotate":
+                # rotate image
+                rows, cols, _ = img.shape
+                M = cv2.getRotationMatrix2D((cols / 2, rows / 2), frame.time * 45, 1)
+                img = cv2.warpAffine(img, M, (cols, rows))
+
+            return img
+
+    webrtc_ctx = webrtc_streamer(
+        key="opencv-filter",
+        mode=WebRtcMode.SENDRECV,
+        client_settings=WEBRTC_CLIENT_SETTINGS,
+        video_transformer_factory=OpenCVVideoTransformer,
+        async_transform=True,
+    )
+
+    if webrtc_ctx.video_transformer:
+        webrtc_ctx.video_transformer.type = st.radio(
+            "Select transform type", ("noop", "cartoon", "edges", "rotate")
+        )
+
+    st.markdown(
+        "This demo is based on "
+        "https://github.com/aiortc/aiortc/blob/2362e6d1f0c730a0f8c387bbea76546775ad2fe8/examples/server/server.py#L34. "  # noqa: E501
+        "Many thanks to the project."
+    )
 
 
 def main():
@@ -133,34 +238,20 @@ def main():
         st.markdown(html_temp, unsafe_allow_html=True)
         st.write("**Instructions while Checking Camrea**")
         st.write('''
-                  1. Tick on  Run  to start.
+                  1. Click on  Start  to open webcam.
                  
-                  2. If get "Cannot use webcam " error, Then Change your webcam number from System Setting.
+                  2. If you have more than one camera , then select by using select device.
                   
-                  3. Untick on  Run  to end.
+                  3. Click on  Stop  to end.
                   
                   4. Still webcam window didnot open,  Contact Us.''')
+        app_video_filters()
         
         
         
         
-        if st.checkbox('Run'):
-            
-            
-            FRAME_WINDOW = st.image([])
-            cap = cv2.VideoCapture(0)
-            
-            if not cap.isOpened():
-                cap = cv2.VideoCapture(1)
-                
-            if not cap.isOpened():
-                raise IOError("Cannot use webcam")
-                ## Opening webcam 
-
-            while True:
-                _, frame = cap.read()
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                FRAME_WINDOW.image(frame)
+        
+        
         
     elif choice == "About":
         
