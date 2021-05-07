@@ -245,7 +245,7 @@ def face_detect():
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # get face region coordinates
-    faces = face_classifier.detectMultiScale(gray)
+    faces = face_cascade .detectMultiScale(gray)
     # get face bounding box for overlay
     for (x,y,w,h) in faces:
       bbox_array = cv2.rectangle(bbox_array,(x,y),(x+w,y+h),(0,255,0),2)
