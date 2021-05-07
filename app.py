@@ -18,6 +18,8 @@ from keras.preprocessing import image
 
 
 
+
+
 try:
     from typing import Literal
 except ImportError:
@@ -27,12 +29,69 @@ import av
 import cv2
 import numpy as np
 import streamlit as st
+import threading
+from typing import Union
+
+# Loading pre-trained parameters for the cascade classifier
+try:
+    face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml') # Face Detection
+    classifier =load_model('Final_model.h5')  #Load model
+    emotion_labels = ['Angry','Disgust','Fear','Happy','Neutral', 'Sad', 'Surprise']  # Emotion that will be predicted
+except Exception:
+    st.write("Error loading cascade classifiers")
 
 
 
 
 def face_detect():
-	print("Work on Progress")
+    class VideoTransformer(VideoTransformerBase):
+        frame_lock: threading.Lock  # `transform()` is running in another thread, then a lock object is used here for thread-safety.
+        in_image: Union[np.ndarray, None]
+        out_image: Union[np.ndarray, None]
+
+        def __init__(self) -> None:
+            self.frame_lock = threading.Lock()
+            self.in_image = None
+            self.out_image = None
+
+        def transform(self, frame: av.VideoFrame) -> np.ndarray:
+            in_image = frame.to_ndarray(format="bgr24")
+
+            out_image = in_image[:, ::-1, :]  # Simple flipping for example.
+
+            with self.frame_lock:
+                self.in_image = in_image
+                self.out_image = out_image
+
+            return in_image
+
+    ctx = webrtc_streamer(key="snapshot", video_transformer_factory=VideoTransformer)
+
+    if ctx.video_transformer:
+        if st.button("Snapshot"):
+            with ctx.video_transformer.frame_lock:
+                in_image = ctx.video_transformer.in_image
+                out_image = ctx.video_transformer.out_image
+
+            if in_image is not None :
+                gray = cv2.cvtColor(in_image, cv2.COLOR_BGR2GRAY)
+                faces = face_classifier.detectMultiScale(gray)
+                for (x,y,w,h) in faces:
+                    a=cv2.rectangle(in_image,(x,y),(x+w,y+h),(0,255,0),2)
+                    roi_gray = gray[y:y+h,x:x+w]
+                    roi_gray = cv2.resize(roi_gray,(48,48),interpolation=cv2.INTER_AREA)  ##Face Cropping for prediction
+                    if np.sum([roi_gray])!=0:
+                        roi = roi_gray.astype('float')/255.0
+                        roi = img_to_array(roi)
+                        roi = np.expand_dims(roi,axis=0) ## reshaping the cropped face image for prediction
+                        prediction = classifier.predict(roi)[0]   #Prediction
+                        label=emotion_labels[prediction.argmax()]
+                        label_position = (x,y)
+                        b=cv2.putText(a,label,label_position,cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)   # Text Adding
+                    else:
+                        cv2.putText(a,'No Faces',(30,80),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
+                st.image(b,channels="BGR")
+
   
     
 
@@ -66,13 +125,7 @@ WEBRTC_CLIENT_SETTINGS = ClientSettings(
 
 
 
-# Loading pre-trained parameters for the cascade classifier
-try:
-    face_classifier = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml') # Face Detection
-    classifier =load_model('Final_model.h5')  #Load model
-    emotion_labels = ['Angry','Disgust','Fear','Happy','Neutral', 'Sad', 'Surprise']  # Emotion that will be predicted
-except Exception:
-    st.write("Error loading cascade classifiers")
+
 
 
 
@@ -197,8 +250,8 @@ def main():
                   
                   5. Still webcam window didnot open,  go to Check Camera from the sidebar.''')
         
-        if st.button("Proceed"):
-            face_detect()
+        
+        face_detect()
     
     
     elif choice == "Check Camera":
