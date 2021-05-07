@@ -240,15 +240,17 @@ def main():
         st.write("Go to the About section from the sidebar to learn more about it.")
         st.write("**Instructions while using the APP**")
         st.write('''
-                  1. Click on the Proceed button to start.
+                  1. Click on the Start button to start.
                  
-                  2. WebCam window will open with a name of Emotion Detector automatically.If not found then, Have a look at the Taskbar.
+                  2. WebCam window will open  automatically. 
+		  
+		  3. Take a snapshot.
                   
-                  3. Make sure that camera shouldn't be used by any other app.
+                  4. Make sure that camera shouldn't be used by any other app.
                   
-                  4. Press "q" key to end the webcam window.
+                  5. For live recognition the app is getting slow and takes more time to predict and couldn't predict easily thus fluctuating the result.Thus Take a snapshot at any instant of time and it will automatically predict.
                   
-                  5. Still webcam window didnot open,  go to Check Camera from the sidebar.''')
+                  6. Still webcam window didnot open,  go to Check Camera from the sidebar.''')
         
         
         face_detect()
