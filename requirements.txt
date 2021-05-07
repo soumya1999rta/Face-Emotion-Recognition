@@ -120,7 +120,7 @@ aiortc==1.2.0
 av==8.0.3 
 streamlit-webrtc==0.11.0
 js2py
-google-collab==1.0.0
+google-colab==1.0.0
 
 
 
