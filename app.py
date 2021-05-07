@@ -16,16 +16,7 @@ from time import sleep
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing import image
 
-# import dependencies
-from IPython.display import display, Javascript, Image,clear_output
-from google.colab.output import eval_js
-from base64 import b64decode, b64encode
-import cv2
-import numpy as np
-import PIL
-import io
-import html
-import time
+
 
 try:
     from typing import Literal
