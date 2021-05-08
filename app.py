@@ -68,7 +68,7 @@ def face_detect():
     ctx = webrtc_streamer(key="snapshot", video_transformer_factory=VideoTransformer)
 
     if ctx.video_transformer:
-	while True:
+        while True:
         
             with ctx.video_transformer.frame_lock:
                 in_image = ctx.video_transformer.in_image
