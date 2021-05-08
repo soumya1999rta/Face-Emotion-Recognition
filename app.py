@@ -68,7 +68,8 @@ def face_detect():
     ctx = webrtc_streamer(key="snapshot", video_transformer_factory=VideoTransformer)
 
     if ctx.video_transformer:
-        if st.button("Snapshot"):
+	while True:
+        
             with ctx.video_transformer.frame_lock:
                 in_image = ctx.video_transformer.in_image
                 out_image = ctx.video_transformer.out_image
@@ -244,11 +245,11 @@ def main():
                  
                   2. WebCam window will open  automatically. 
 		  
-		  3. Take a snapshot.
+		  3. It will automatically throw the image with the prediction at that instant.
                   
                   4. Make sure that camera shouldn't be used by any other app.
                   
-                  5. For live recognition the app is getting slow and takes more time to predict and couldn't predict easily thus fluctuating the result.Thus Take a snapshot at any instant of time and it will automatically predict.
+                  5. For live recognition the app is getting slow and takes more time to predict and couldn't predict easily thus fluctuating the result.Thus Taking a snapshot at any instant of time and it will automatically predict and give the picture with prediction.
                   
                   6. Still webcam window didnot open,  go to Check Camera from the sidebar.''')
         
