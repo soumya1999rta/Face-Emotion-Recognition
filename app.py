@@ -65,13 +65,13 @@ def face_detect():
 
             return out_image
 
-    ctx = webrtc_streamer(key="snapshot", video_transformer_factory=VideoTransformerBase)
+    ctx = webrtc_streamer(key="snapshot", video_transformer_factory=VideoTransformer)
 
-    if ctx.VideoTransformerBase:
+    if ctx.video_transformer:
         if st.button("Snapshot"):
-            with ctx.VideoTransformerBase.frame_lock:
-                in_image = ctx.VideoTransformerBase.in_image
-                out_image = ctx.VideoTransformerBase.out_image
+            with ctx.video_transformer.frame_lock:
+                in_image = ctx.video_transformer.in_image
+                out_image = ctx.video_transformer.out_image
 
             if in_image is not None :
                 gray = cv2.cvtColor(in_image, cv2.COLOR_BGR2GRAY)
