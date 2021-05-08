@@ -65,7 +65,7 @@ def face_detect():
 
             return out_image
 
-    ctx = webrtc_streamer(key="snapshot", video_transformer_factory=VideoTransformer)
+    ctx = webrtc_streamer(key="snapshot", video_transformer_factory=VideoTransformerBase)
 
     if ctx.video_transformer:
         if st.button("Snapshot"):
