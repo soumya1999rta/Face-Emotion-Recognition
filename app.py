@@ -249,9 +249,12 @@ def main():
                   
                   4. Make sure that camera shouldn't be used by any other app.
                   
-                  5. For live recognition the app is getting slow and takes more time to predict and couldn't predict easily thus fluctuating the result.Thus Taking a snapshot at any instant of time and it will automatically predict and give the picture with prediction.
+                  5. For live recognition the app is getting slow and takes more time to predict and couldn't predict easily thus fluctuating the result.
+		     Thus Taking a snapshot at any instant of time and it will automatically predict and give the picture with prediction.
+		     
+		  6. Easy to know what was or what is the emotion at a particular time.
                   
-                  6. Still webcam window didnot open,  go to Check Camera from the sidebar.''')
+                  7. Still webcam window didnot open,  go to Check Camera from the sidebar.''')
         
         
         face_detect()
