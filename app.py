@@ -63,7 +63,7 @@ def face_detect():
                 self.in_image = in_image
                 self.out_image = out_image
 
-            return in_image
+            return out_image
 
     ctx = webrtc_streamer(key="snapshot", video_transformer_factory=VideoTransformer)
 
