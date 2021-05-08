@@ -90,7 +90,7 @@ def face_detect():
                         label_position = (x,y)
                         b=cv2.putText(a,label,label_position,cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)   # Text Adding
                     else:
-                        cv2.putText(a,'No Faces',(30,80),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
+                        b=cv2.putText(a,'No Faces',(30,80),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
                 st.image(b,channels="BGR")
 
   
