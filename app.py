@@ -67,8 +67,8 @@ def face_detect():
 
     ctx = webrtc_streamer(key="snapshot", video_transformer_factory=VideoTransformer)
 
-    if ctx.video_transformer:
-        while True:
+    while ctx.video_transformer:
+        
         
             with ctx.video_transformer.frame_lock:
                 in_image = ctx.video_transformer.in_image
@@ -89,9 +89,7 @@ def face_detect():
                         label=emotion_labels[prediction.argmax()]
                         label_position = (x,y)
                         b=cv2.putText(a,label,label_position,cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)   # Text Adding
-                    else:
-                        b=cv2.putText(a,'No Faces',(30,80),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
-                st.image(b,channels="BGR")
+                        st.image(b,channels="BGR")
 
   
     
