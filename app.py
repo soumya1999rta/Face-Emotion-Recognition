@@ -1,20 +1,17 @@
 # Importing required libraries, obviously
 import logging
 import logging.handlers
-import queue
 import threading
-import urllib.request
 from pathlib import Path
-from typing import List, NamedTuple
 import streamlit as st
 import cv2
-from PIL import Image
 import numpy as np
-import os
 from keras.models import load_model
-from time import sleep
 from keras.preprocessing.image import img_to_array
-from keras.preprocessing import image
+from streamlit_webrtc import VideoTransformerBase, webrtc_streamer
+import av
+from typing import Union
+
 
 
 
@@ -25,12 +22,7 @@ try:
 except ImportError:
     from typing_extensions import Literal  # type: ignore
     
-import av
-import cv2
-import numpy as np
-import streamlit as st
-import threading
-from typing import Union
+
 
 # Loading pre-trained parameters for the cascade classifier
 try:
@@ -39,6 +31,39 @@ try:
     emotion_labels = ['Angry','Disgust','Fear','Happy','Neutral', 'Sad', 'Surprise']  # Emotion that will be predicted
 except Exception:
     st.write("Error loading cascade classifiers")
+    
+    
+class VideoTransformer(VideoTransformerBase):
+    
+    
+
+    def transform(self, frame):
+        label=[]
+        img = frame.to_ndarray(format="bgr24")
+        face_detect = cv2.CascadeClassifier(cv2.data.haarcascades +'haarcascade_frontalface_default.xml')
+        emotion_labels = ['Angry','Disgust','Fear','Happy','Neutral', 'Sad', 'Surprise']
+        
+        
+        
+
+
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        faces = face_detect.detectMultiScale(gray, 1.3,1)
+        
+
+        for (x,y,w,h) in faces:
+            a=cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+            roi_gray = gray[y:y+h,x:x+w]
+            roi_gray = cv2.resize(roi_gray,(48,48),interpolation=cv2.INTER_AREA)  ##Face Cropping for prediction
+            roi = roi_gray.astype('float')/255.0
+            roi = img_to_array(roi)
+            roi = np.expand_dims(roi,axis=0) ## reshaping the cropped face image for prediction
+            prediction = classifier.predict(roi)[0]   #Prediction
+            label=emotion_labels[prediction.argmax()]
+            label_position = (x,y)
+            b=cv2.putText(a,label,label_position,cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
+               
+        return b
 
 
 
@@ -221,11 +246,11 @@ def app_video_filters():
 
 def main():
     
-    activities = ["Introduction","Home", "Check Camera","About","Contact Us"]
+    activities = ["Introduction","Home","Real-Time Snapshot", "Check Camera","About","Contact Us"]
     choice = st.sidebar.selectbox("Pick something Useful", activities)
     
 
-    if choice == "Home":
+    if choice == "Real-Time Snapshot":
         html_temp = """
     <body style="background-color:red;">
     <div style="background-color:teal ;padding:10px">
@@ -239,23 +264,56 @@ def main():
         st.write("Go to the About section from the sidebar to learn more about it.")
         st.write("**Instructions while using the APP**")
         st.write('''
+                  
                   1. Click on the Start button to start.
                  
                   2. WebCam window will open  automatically. 
 		  
-		  3. It will automatically throw the image with the prediction at that instant.
+		          3. It will automatically throw the image with the prediction at that instant.
                   
                   4. Make sure that camera shouldn't be used by any other app.
                   
                   5. For live recognition the app is getting slow and takes more time to predict and couldn't predict easily thus fluctuating the result.
-		     Thus Taking a snapshot at any instant of time and it will automatically predict and give the picture with prediction.
+		             Thus Taking a snapshot at any instant of time and it will automatically predict and give the picture with prediction.
 		     
-		  6. Easy to know what was or what is the emotion at a particular time.
+		          6. Easy to know what was or what is the emotion at a particular time.
                   
-                  7. Still webcam window didnot open,  go to Check Camera from the sidebar.''')
+                  7. Click on  Stop  to end.
+                  
+                  8. Still webcam window didnot open,  go to Check Camera from the sidebar.''')
         
         
         face_detect()
+        
+    elif choice =="Home":
+        html_temp = """
+    <body style="background-color:red;">
+    <div style="background-color:teal ;padding:10px">
+    <h2 style="color:white;text-align:center;">Face Emotion Recognition WebApp</h2>
+    </div>
+    </body>
+        """
+        st.markdown(html_temp, unsafe_allow_html=True)
+        st.title(":angry::dizzy_face::fearful::smile::pensive::open_mouth::neutral_face:")
+        st.write("**Using the Haar cascade Classifiers**")
+        st.write("Go to the About section from the sidebar to learn more about it.")
+        st.write("**Instructions while using the APP**")
+        st.write('''
+                  
+                  1. Click on the Start button to start.
+                 
+                  2. WebCam window will open  automatically. 
+		  
+		          3. It will automatically  predict at that instant.
+                  
+                  4. Make sure that camera shouldn't be used by any other app.
+                  
+                  5. Click on  Stop  to end.
+                
+		          6. Still webcam window didnot open,  go to Check Camera from the sidebar.''')
+        webrtc_streamer(key="example", video_transformer_factory=VideoTransformer)
+        
+        
     
     
     elif choice == "Check Camera":
@@ -269,11 +327,12 @@ def main():
         st.markdown(html_temp, unsafe_allow_html=True)
         st.write("**Instructions while Checking Camrea**")
         st.write('''
+                  
                   1. Click on  Start  to open webcam.
                  
                   2. If you have more than one camera , then select by using select device.
 		  
-		  3. Have some fun with your camera by choosing the options below.
+		          3. Have some fun with your camera by choosing the options below.
                   
                   4. Click on  Stop  to end.
                   
@@ -332,5 +391,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
