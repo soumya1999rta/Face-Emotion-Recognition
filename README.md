@@ -65,8 +65,11 @@ In deep learning, a convolutional neural network (CNN, or ConvNet) is a class of
  
 
 •	The training gave the accuracy of 82% and test accuracy of 66%. It seems excellent. So, I save the model and the detection i got from live video was excellent.
+
 •	One drawback of the system is the some Disgust faces are showing Neutral .Because less no. of disgust faces are given to train .This may be the reason.
+
 •	I thought it was a good score should improve the score.
+
 •	Thus I decided that I will deploy the model.
 
 ## Loss & Accuracy Plot
