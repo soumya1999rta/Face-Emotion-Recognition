@@ -6,6 +6,8 @@ Emotion recognition is the process of identifying human emotion. People vary wid
 
 Facial expressions are a form of nonverbal communication. Various studies have been done for the classification of these facial expressions. There is strong evidence for the universal facial expressions of seven emotions which include: neutral happy, sadness, anger, disgust, fear, and surprise. So it is very important to detect these emotions on the face as it has wide applications in the field of Computer Vision and Artificial Intelligence. These fields are researching on the facial emotions to get the sentiments of the humans automatically.
 
+Here is the presentation link: https://github.com/soumya1999rta/Face-Emotion-Recognition/blob/main/Capstone%20Project_DL%20n%20MLE_%20Face_Emotion_Recognition_Soumya_Ranjan_Mishra.pdf.pdf
+
 ## Problem Statement
 
 The Indian education landscape has been undergoing rapid changes for the past 10 years owing to the advancement of web-based learning services, specifically, eLearning platforms.
